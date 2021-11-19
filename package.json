@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/ffi-napi": "^4.0.4",
-    "@types/node": "^16.11.7",
+    "@types/node": "^16.11.9",
     "@types/ref-array-di": "^1.2.3",
     "@types/ref-napi": "^3.0.4",
     "@types/ref-struct-di": "^1.1.5",
