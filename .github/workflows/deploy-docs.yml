@@ -20,5 +20,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          branch: master
+          branch: docs
           folder: docs
