@@ -40,6 +40,7 @@ const omron_bp_day_info = Struct({
 
 export default ffi.Library(path.join(__dirname, "../../libomron/libomron.so.0.9.0"), {
   omron_create: [omron_device_ref, []],
+  omron_delete: [ref.types.void, [omron_device_ref]],
   omron_open: [ref.types.int, [omron_device_ref, ref.types.int, ref.types.int, ref.types.uint32]],
   omron_close: [ref.types.int, [omron_device_ref]],
   omron_get_device_version: [ref.types.int, [omron_device_ref, ref.refType(ref.types.uchar)]],
