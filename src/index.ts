@@ -16,11 +16,11 @@ export interface OmronMeasurement {
 }
 
 export class OmronDevice {
-  private _vid;
-  private _pid;
-  private _device;
-  private _isOpen;
-  private _isPlugged;
+  private _vid: number;
+  private _pid: number;
+  private _device: any;
+  private _isOpen: boolean;
+  private _isPlugged: boolean;
 
   constructor() {
     this._vid = 0x0590;
