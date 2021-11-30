@@ -1,4 +1,5 @@
 import * as ref from "ref-napi";
+import * as usb from "usb";
 
 import libomron from "./libomron";
 import * as errors from "./errors";
@@ -19,12 +20,16 @@ export class OmronDevice {
   private _pid;
   private _device;
   private _isOpen;
+  private _isPlugged;
 
   constructor() {
     this._vid = 0x0590;
     this._pid = 0x0028;
     this._device = null;
     this._isOpen = false;
+    this._isPlugged = this._detectIsPlugged();
+    usb.on("attach", this._onAttach);
+    usb.on("detach", this._onDetach);
   }
 
   /** Device vendor ID (default: 0x0590) */
@@ -48,6 +53,11 @@ export class OmronDevice {
     return this._isOpen;
   }
 
+  /** Device plug status */
+  get isPlugged(): boolean {
+    return this._isPlugged;
+  }
+
   /** Open device */
   open = async (): Promise<void> => {
     const createDevice = new Promise<void>((resolve, reject) => {
@@ -60,9 +70,11 @@ export class OmronDevice {
     });
     const openDevice = new Promise<void>((resolve, reject) => {
       try {
-        const ret = libomron.omron_open(this._device, this._vid, this._pid, 0);
-        if (ret < 0) reject(errors.openDeviceError);
-        this._isOpen = true;
+        if (!this._isOpen) {
+          const ret = libomron.omron_open(this._device, this._vid, this._pid, 0);
+          if (ret < 0) reject(errors.openDeviceError);
+          this._isOpen = true;
+        }
         resolve();
       } catch (err) {
         reject(errors.openDeviceError);
@@ -78,7 +90,7 @@ export class OmronDevice {
         if (this._isOpen) {
           const ret = libomron.omron_close(this._device);
           if (ret < 0) reject(errors.closeDeviceError);
-          else this._isOpen = false;
+          this._isOpen = false;
         }
         resolve();
       } catch (err) {
@@ -145,6 +157,33 @@ export class OmronDevice {
         resolve();
       }
     });
+  };
+
+  private _isOmronDevice = (device: usb.Device): boolean => {
+    const pid = device.deviceDescriptor.idProduct;
+    const vid = device.deviceDescriptor.idVendor;
+    if (pid === parseInt(this._pid.toString(), 10) && vid === parseInt(this._vid.toString(), 10)) return true;
+    return false;
+  };
+
+  private _onAttach = (device: usb.Device): void => {
+    if (this._isOmronDevice(device)) {
+      this._isPlugged = true;
+    }
+  };
+
+  private _onDetach = (device: usb.Device): void => {
+    if (this._isOmronDevice(device)) {
+      this._device = null;
+      this._isOpen = false;
+      this._isPlugged = false;
+    }
+  };
+
+  private _detectIsPlugged = (): boolean => {
+    const devices = usb.getDeviceList();
+    for (const device of devices) if (this._isOmronDevice(device)) return true;
+    return false;
   };
 
   /**
