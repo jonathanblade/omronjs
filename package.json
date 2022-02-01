@@ -36,7 +36,7 @@
     "@types/ref-array-di": "^1.2.3",
     "@types/ref-napi": "^3.0.4",
     "@types/ref-struct-di": "^1.1.5",
-    "@types/usb": "^1.5.4",
+    "@types/usb": "^2.0.5",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "eslint": "^8.2.0",
