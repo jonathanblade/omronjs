@@ -28,7 +28,7 @@
     "ref-array-di": "^1.2.2",
     "ref-napi": "^3.0.3",
     "ref-struct-di": "^1.1.1",
-    "usb": "^1.9.1"
+    "usb": "^2.2.0"
   },
   "devDependencies": {
     "@types/ffi-napi": "^4.0.4",
